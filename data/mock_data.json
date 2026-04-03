@@ -1,0 +1,11 @@
+{
+  "id": 7142859102,
+  "item": "Gimli",
+  "category": "Stronk-degree",
+  "totalVotes": 100,
+  "options": [
+    { "label": "1", "numVotes": 10 },
+    { "label": "5", "numVotes": 30 },
+    { "label": "10", "numVotes": 60 }
+  ]
+}
