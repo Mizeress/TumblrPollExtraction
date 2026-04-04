@@ -14,5 +14,4 @@ This project implements a "serverless" architecture to bridge social engagement 
 * **Data Format:** JSON-based flat-file database
 * **Frontend:** Plotly.js Radar Charts
 * **Hosting:** GitHub.io (Static Site)
-* 
 ---
