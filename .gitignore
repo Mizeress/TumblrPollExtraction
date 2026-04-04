@@ -3,3 +3,4 @@ target/
 
 # Ignore my mock test data for now. 
 data/ 
+.vscode/

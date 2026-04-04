@@ -13,28 +13,6 @@ import com.tumblrPoll.metrics.Helpers.TumblrRequester;
 
 public class Main {
     public static void main(String[] args) {
-    //     try {
-    //         // 1. Read the mock JSON file
-    //         String jsonContent = new String(Files.readAllBytes(Paths.get("data/mock_data.json")));
-
-    //         // 2. Parse it into a Poll object where T is a String (for now)
-    //         Poll<String> testPoll = Poll.parseJSON(jsonContent, String.class);
-
-    //         if (testPoll != null) {
-    //             System.out.println("✅ JSON Parsed Successfully!");
-    //             System.out.println("Item: " + testPoll.getItem());
-    //             System.out.println("Category: " + testPoll.getCategory());
-                
-    //             // 3. Run the math logic
-    //             double average = Poll.getWeightedAverage(testPoll);
-    //             System.out.println("Calculated Weighted Average: " + average);
-    //         }
-
-    //     } catch (Exception e) {
-    //         System.err.println("Critical Error: " + e.getMessage());
-    //         e.printStackTrace();
-    //     }
-    //
 
         // Load environment variables from .env file
         Map<String, String> env = EnvLoader.load(".env");
@@ -54,13 +32,13 @@ public class Main {
         
 
         String blog = "mizeress.tumblr.com";
-        String tag = "test poll";
+        String[] tags = { "radiants" };
         try {
-            // String posts = requester.fetchPostsByTag(blog, tag);
-            String poll = requester.fetchPollResults(blog, id);
+            String posts = requester.fetchPostsByTag(blog, tags);
+            // String poll = requester.fetchPollResults(blog, id);
             // Create a mapper that indents the output
             ObjectMapper mapper = new ObjectMapper();
-            Object jsonObject = mapper.readValue(poll, Object.class); // Convert string to object
+            Object jsonObject = mapper.readValue(posts, Object.class); // Convert string to object
             String prettyJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
 
             System.out.println("=== PRETTY API RESPONSE ===");

@@ -28,30 +28,12 @@ public class TumblrRequester {
         this.client = new OkHttpClient();
     }
 
-    public String fetchPollResults(String blog, String postId) throws IOException {
-        String url = String.format("https://api.tumblr.com/v2/blog/%s/posts/%s", blog, postId);
-
-        OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, url);
-        oAuthRequest.addQuerystringParameter("npf", "true");
-        oAuthRequest.addQuerystringParameter("id", postId);
-        oAuthRequest.addQuerystringParameter("voted", "true");
-
-        service.signRequest(accessToken, oAuthRequest);
-
-        String completeUrl = oAuthRequest.getCompleteUrl();
-        Request request = new Request.Builder().url(completeUrl).headers(okhttp3.Headers.of(oAuthRequest.getHeaders())).build();
-
-        try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
-        }
-    }
-
-    public String fetchPostsByTag(String blog, String tag) throws IOException {
+    public String fetchPostsByTag(String blog, String[] tags) throws IOException {
         String url = String.format("https://api.tumblr.com/v2/blog/%s/posts", blog);
 
         OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, url);
         oAuthRequest.addQuerystringParameter("npf", "true");
-        oAuthRequest.addQuerystringParameter("tag", tag);
+        oAuthRequest.addQuerystringParameter("tag", tags[0]);
 
         service.signRequest(accessToken, oAuthRequest);
 
@@ -59,6 +41,7 @@ public class TumblrRequester {
         Request request = new Request.Builder().url(completeUrl).headers(okhttp3.Headers.of(oAuthRequest.getHeaders())).build();
 
         try (Response response = client.newCall(request).execute()) {
+            // Filter out for more tags
             return response.body().string();
         }
     }
