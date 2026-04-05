@@ -2,10 +2,12 @@ package com.tumblrPoll.metrics.Helpers;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
+import com.tumblrPoll.metrics.DTOs.PostResponseDTO;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -28,12 +30,12 @@ public class TumblrRequester {
         this.client = new OkHttpClient();
     }
 
-    public String fetchPostsByTag(String blog, String[] tags) throws IOException {
+    public String fetchPostUrl(String blog, String[] tags) throws IOException {
         String url = String.format("https://api.tumblr.com/v2/blog/%s/posts", blog);
 
         OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, url);
         oAuthRequest.addQuerystringParameter("npf", "true");
-        oAuthRequest.addQuerystringParameter("tag", tags[0]);
+        oAuthRequest.addQuerystringParameter("tag", tags[0]);  
 
         service.signRequest(accessToken, oAuthRequest);
 
@@ -41,8 +43,16 @@ public class TumblrRequester {
         Request request = new Request.Builder().url(completeUrl).headers(okhttp3.Headers.of(oAuthRequest.getHeaders())).build();
 
         try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
             // Filter out for more tags
-            return response.body().string();
+            String jsonResponse = response.body().string();
+            ObjectMapper mapper = new ObjectMapper();
+            PostResponseDTO dto = mapper.readValue(jsonResponse, PostResponseDTO.class);
+
+            return PostResponseDTO.getPostURLsWithTag(dto, tags);
         }
     }
 

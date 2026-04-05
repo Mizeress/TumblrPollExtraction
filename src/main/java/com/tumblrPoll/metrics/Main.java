@@ -3,7 +3,6 @@ package com.tumblrPoll.metrics;
 import java.io.IOException;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.apis.TumblrApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth1AccessToken;
@@ -32,17 +31,10 @@ public class Main {
         
 
         String blog = "mizeress.tumblr.com";
-        String[] tags = { "radiants" };
+        String[] tags = { "radiants", "radiant orders", "brandon sanderson", "which feels pretty accurate" };
         try {
-            String posts = requester.fetchPostsByTag(blog, tags);
-            // String poll = requester.fetchPollResults(blog, id);
-            // Create a mapper that indents the output
-            ObjectMapper mapper = new ObjectMapper();
-            Object jsonObject = mapper.readValue(posts, Object.class); // Convert string to object
-            String prettyJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
-
-            System.out.println("=== PRETTY API RESPONSE ===");
-            System.out.println(prettyJson);
+            String post = requester.fetchPostUrl(blog, tags);
+            System.out.println("Post URL: " + post);
             
         } catch (IOException e) {
             System.err.println("Error fetching posts: " + e.getMessage());

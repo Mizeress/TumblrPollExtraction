@@ -25,7 +25,7 @@ public class PostResponseDTO {
         
         return Arrays.stream(posts)
             .filter(post -> post.getTags() != null && post.getTags().containsAll(List.of(tags)))
-            .map(Post::getPost_url).findFirst().orElseThrow(() -> new RuntimeException("No post found with the specified tags."));
+            .map(Post::getPostUrl).findFirst().orElseThrow(() -> new RuntimeException("No post found with the specified tags."));
         
     }
 }
