@@ -30,13 +30,13 @@ public class Main {
         OAuth1AccessToken accessToken = new OAuth1AccessToken(TOKEN, TOKEN_SECRET);
 
         TumblrRequester requester = new TumblrRequester(service, accessToken);
-        
 
-        String blog = "mizeress.tumblr.com";
-        String blogName = "mizeress";
-        String[] tags = { "radiants" };
+        String blogName = env.get("BLOG_NAME");
+        String blogDomain = env.get("BLOG_DOMAIN");
+        String[] tags = env.get("TAGS").split(",");
+
         try {
-            PostResponseDTO dto = requester.fetchPosts(blog, tags[0]); // All posts with 1st tag
+            PostResponseDTO dto = requester.fetchPosts(blogDomain, tags[0]); // All posts with 1st tag
 
             long postId = PostResponseDTO.GetPostId(dto, tags); // Post data matching all tags
 
