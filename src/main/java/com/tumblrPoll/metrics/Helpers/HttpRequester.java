@@ -19,8 +19,8 @@ public class HttpRequester {
             .cookieHandler(new CookieManager()).build();
     }
 
-    public String fetchPollResults(String blog, String postId, String pollId, String formKey) throws IOException, InterruptedException {
-        String url = String.format("https://www.tumblr.com/api/v2/polls/%s/%s/%s", blog, postId, pollId);
+    public String fetchPollResults(String blogName, long postId, String pollId, String formKey) throws IOException, InterruptedException {
+        String url = String.format("https://www.tumblr.com/api/v2/polls/%s/%s/%s/results", blogName, postId, pollId);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -29,8 +29,8 @@ public class HttpRequester {
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 // Internal API often requires the Referer to prevent cross-site hits
-                .header("Referer", String.format("https://www.tumblr.com/%s/%s", blog, postId))
-                .POST(HttpRequest.BodyPublishers.noBody())
+                .header("Referer", String.format("https://www.tumblr.com/%s", blogName))
+                .GET()
                 .build();
         
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

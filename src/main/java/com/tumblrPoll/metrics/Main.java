@@ -34,32 +34,12 @@ public class Main {
         
 
         String blog = "mizeress.tumblr.com";
+        String blogName = "mizeress";
         String[] tags = { "radiants" };
         try {
             PostResponseDTO dto = requester.fetchPosts(blog, tags[0]); // All posts with 1st tag
 
-            //TEST
-            // for (Post p : dto.getResponse().getPosts()) {
-            //     List<String> currentTags = p.getTags();
-            //     System.out.println("Checking Post ID: " + p.getId());
-            //     if (currentTags == null) {
-            //         System.out.println("  -> Tags array is NULL");
-            //     } else {
-            //         System.out.println("  -> Raw Tags: " + currentTags);
-            //         // Let's see if our search tag "radiants" is actually in there
-            //         boolean match = currentTags.stream()
-            //                                 .anyMatch(t -> t.equalsIgnoreCase("radiants"));
-            //         System.out.println("  -> Does 'radiants' match any? " + match);
-            //     }
-            // }
-            //TEST
-
-            Long postId = PostResponseDTO.GetPostId(dto, tags); // Post data matching all tags
-
-            // // Debug: See what tags are actually on the posts we retrieved
-            // for (Post p : dto.getResponse().getPosts()) {
-            //     System.out.println("Post ID " + p.getId() + " has tags: " + p.getTags());
-            // }
+            long postId = PostResponseDTO.GetPostId(dto, tags); // Post data matching all tags
 
             String pollContentId = PostResponseDTO.getPollContentId(postId, dto);
             System.out.println("Post ID: " + postId);
@@ -68,7 +48,7 @@ public class Main {
             HttpRequester httpRequester = new HttpRequester();
             String formKey = httpRequester.getFormKey(PostResponseDTO.getPostById(postId, dto).getPostUrl());
 
-            String pollResults = httpRequester.fetchPollResults(blog, String.valueOf(postId), pollContentId, formKey);
+            String pollResults = httpRequester.fetchPollResults(blogName, postId, pollContentId, formKey);
             
             ObjectMapper mapper = new ObjectMapper();
             // Parse the raw string into a tree, then write it pretty
