@@ -13,9 +13,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-// TODO update this to filter beyond just one tag (so I don't have to make multiple requests for each tag/category of poll I want to analyze)
-// and to extract only the poll data. 
-
 /**
  * Helper class to pull posts from my blog based on tags. 
  */
@@ -30,12 +27,20 @@ public class TumblrRequester {
         this.client = new OkHttpClient();
     }
 
-    public String fetchPostUrl(String blog, String[] tags) throws IOException {
+    /**
+     * Fetch posts from a blog containing specified tag
+     * @param blog
+     * @param tag
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+     public PostResponseDTO fetchPosts(String blog, String tag) throws IOException, InterruptedException {
         String url = String.format("https://api.tumblr.com/v2/blog/%s/posts", blog);
 
         OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, url);
         oAuthRequest.addQuerystringParameter("npf", "true");
-        oAuthRequest.addQuerystringParameter("tag", tags[0]);  
+        oAuthRequest.addQuerystringParameter("tag", tag);  
 
         service.signRequest(accessToken, oAuthRequest);
 
@@ -52,7 +57,7 @@ public class TumblrRequester {
             ObjectMapper mapper = new ObjectMapper();
             PostResponseDTO dto = mapper.readValue(jsonResponse, PostResponseDTO.class);
 
-            return PostResponseDTO.getPostURLsWithTag(dto, tags);
+            return dto;
         }
     }
 

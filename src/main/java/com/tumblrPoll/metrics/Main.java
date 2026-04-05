@@ -3,11 +3,14 @@ package com.tumblrPoll.metrics;
 import java.io.IOException;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.apis.TumblrApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
+import com.tumblrPoll.metrics.DTOs.PostResponseDTO;
 import com.tumblrPoll.metrics.Helpers.EnvLoader;
+import com.tumblrPoll.metrics.Helpers.HttpRequester;
 import com.tumblrPoll.metrics.Helpers.TumblrRequester;
 
 public class Main {
@@ -31,15 +34,63 @@ public class Main {
         
 
         String blog = "mizeress.tumblr.com";
-        String[] tags = { "radiants", "radiant orders", "brandon sanderson", "which feels pretty accurate" };
+        String[] tags = { "radiants" };
         try {
-            String post = requester.fetchPostUrl(blog, tags);
-            System.out.println("Post URL: " + post);
+            PostResponseDTO dto = requester.fetchPosts(blog, tags[0]); // All posts with 1st tag
+
+            //TEST
+            // for (Post p : dto.getResponse().getPosts()) {
+            //     List<String> currentTags = p.getTags();
+            //     System.out.println("Checking Post ID: " + p.getId());
+            //     if (currentTags == null) {
+            //         System.out.println("  -> Tags array is NULL");
+            //     } else {
+            //         System.out.println("  -> Raw Tags: " + currentTags);
+            //         // Let's see if our search tag "radiants" is actually in there
+            //         boolean match = currentTags.stream()
+            //                                 .anyMatch(t -> t.equalsIgnoreCase("radiants"));
+            //         System.out.println("  -> Does 'radiants' match any? " + match);
+            //     }
+            // }
+            //TEST
+
+            Long postId = PostResponseDTO.GetPostId(dto, tags); // Post data matching all tags
+
+            // // Debug: See what tags are actually on the posts we retrieved
+            // for (Post p : dto.getResponse().getPosts()) {
+            //     System.out.println("Post ID " + p.getId() + " has tags: " + p.getTags());
+            // }
+
+            String pollContentId = PostResponseDTO.getPollContentId(postId, dto);
+            System.out.println("Post ID: " + postId);
+            System.out.println("Poll Content ID: " + pollContentId);
+
+            HttpRequester httpRequester = new HttpRequester();
+            String formKey = httpRequester.getFormKey(PostResponseDTO.getPostById(postId, dto).getPostUrl());
+
+            String pollResults = httpRequester.fetchPollResults(blog, String.valueOf(postId), pollContentId, formKey);
+            
+            ObjectMapper mapper = new ObjectMapper();
+            // Parse the raw string into a tree, then write it pretty
+            Object json = mapper.readValue(pollResults, Object.class); 
+            String prettyJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+
+            System.out.println(prettyJson);
+
+            
             
         } catch (IOException e) {
             System.err.println("Error fetching posts: " + e.getMessage());
             e.printStackTrace();
-        } finally {
+        } catch (InterruptedException e) {
+            System.err.println("Request interrupted: " + e.getMessage());
+            e.printStackTrace();
+            Thread.currentThread().interrupt(); // Restore interrupt status
+        } catch (RuntimeException e) {
+            System.err.println("Error processing posts: " + e.getMessage());
+            e.printStackTrace();
+        }
+        finally {
             requester.cleanup();
             System.out.println("Cleanup complete. Exiting.");
             System.exit(0); // Forces the JVM to terminate lingering threads

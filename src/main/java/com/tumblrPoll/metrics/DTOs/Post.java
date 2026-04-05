@@ -1,6 +1,7 @@
 package com.tumblrPoll.metrics.DTOs;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,4 +23,6 @@ public class Post {
     private String postUrl;
     // private long timestamp; //May be useful eventually
     private List<String> tags;
+   
+    private List<Map<String, Object>> content; // We only care about the poll content blocks, so we can store the content as a list of maps and extract the poll content blocks later
 }
