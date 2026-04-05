@@ -10,7 +10,6 @@ import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import com.tumblrPoll.metrics.DTOs.PostResponseDTO;
 import com.tumblrPoll.metrics.Helpers.EnvLoader;
-import com.tumblrPoll.metrics.Helpers.HttpRequester;
 import com.tumblrPoll.metrics.Helpers.TumblrRequester;
 
 public class Main {
@@ -45,10 +44,7 @@ public class Main {
             System.out.println("Post ID: " + postId);
             System.out.println("Poll Content ID: " + pollContentId);
 
-            HttpRequester httpRequester = new HttpRequester();
-            String formKey = httpRequester.getFormKey(PostResponseDTO.getPostById(postId, dto).getPostUrl());
-
-            String pollResults = httpRequester.fetchPollResults(blogName, postId, pollContentId, formKey);
+            String pollResults = requester.fetchPollResults(blogName, postId, pollContentId);
             
             ObjectMapper mapper = new ObjectMapper();
             // Parse the raw string into a tree, then write it pretty

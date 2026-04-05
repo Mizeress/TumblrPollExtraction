@@ -52,12 +52,33 @@ public class TumblrRequester {
                 throw new IOException("Unexpected code " + response);
             }
 
-            // Filter out for more tags
             String jsonResponse = response.body().string();
             ObjectMapper mapper = new ObjectMapper();
             PostResponseDTO dto = mapper.readValue(jsonResponse, PostResponseDTO.class);
 
             return dto;
+        }
+    }
+
+    public String fetchPollResults(String blogName, long postId, String pollId) throws IOException, InterruptedException {
+        String url = String.format("https://api.tumblr.com/v2/polls/%s/%s/%s/results", blogName, postId, pollId);
+
+        OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, url);
+        oAuthRequest.addQuerystringParameter("npf", "true");
+
+        service.signRequest(accessToken, oAuthRequest);
+
+        String completeUrl = oAuthRequest.getCompleteUrl();
+        Request request = new Request.Builder().url(completeUrl).headers(okhttp3.Headers.of(oAuthRequest.getHeaders())).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            String jsonResponse = response.body().string();
+
+            return jsonResponse;
         }
     }
 
