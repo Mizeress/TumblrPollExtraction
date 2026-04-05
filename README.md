@@ -20,7 +20,7 @@ This project implements a "serverless" architecture to bridge social engagement 
 ### Results API Call
 This is the secret to this project working. Tumblr's official API has no documented endpoint, but there is an endpoint exposed. Bear in mind that since it's not documented, it may not have official support.
 
-This request is structured as follows: `https://api.tumblr.com/api/v2/polls/<blogName>/<postId>/<pollId>/results`
+This request is structured as follows: `https://api.tumblr.com/v2/polls/<blogName>/<postId>/<pollId>/results`
 - blogName: The name of the post's author. E.G. `mizeress`
 - postId: The ID of the post. This _can_ be retrieved from the official API
 - pollId: The Poll's specific content_id. Also obtained from the official API
