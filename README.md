@@ -24,3 +24,26 @@ This request is structured as follows: `https://api.tumblr.com/v2/polls/<blogNam
 - blogName: The name of the post's author. E.G. `mizeress`
 - postId: The ID of the post. This _can_ be retrieved from the official API
 - pollId: The Poll's specific content_id. Also obtained from the official API
+
+### .env File
+This project uses a .env file to configure usage. Simply create a file at the root of the repo titled .env and provide the following: 
+- TUMBLR_CONSUMER_KEY: Consumer key provided by Tumblr API registration
+- TUMBLR_CONSUMER_SECRET: Consumer Secret provided by Tumblry API registration
+- TUMBLR_TOKEN: Token provided by tumblr API registration
+- TUMBLR_TOKEN_SECRET: Token secret provided by Tumblr API registration
+
+- BLOG_NAME: The name of your blog
+- BLOG_DOMAIN: Full domain of your blog (Usually, but not always, <blogName>.tumblr.com)
+- TAGS: The tags of the post you want to search for. Should be unique otherwise the post you recieve will be undeterministic. 
+
+Example:
+```
+TUMBLR_CONSUMER_KEY=***
+TUMBLR_CONSUMER_SECRET=***
+TUMBLR_TOKEN=***
+TUMBLR_TOKEN_SECRET=***
+
+BLOG_NAME=mizeress
+BLOG_DOMAIN=mizeress.tumblr.com
+TAGS=lotr_stats,polls,Mordor Coeffecient
+```
